@@ -50,7 +50,6 @@ fi
 
 # }}}
 
-
 # zplug {{{
 
 # install zplug, if necessary
@@ -72,6 +71,8 @@ zplug "junegunn/fzf", as:command, hook-build:"./install --bin", use:"bin/{fzf-tm
 zplug "zsh-users/zsh-autosuggestions", defer:3
 
 zplug "zdharma/zsh-diff-so-fancy", as:command, use:bin/git-dsf
+
+zplug 'dracula/zsh', as:theme
 
 # zim {{{
 zplug "zimfw/zimfw", as:plugin, use:"init.zsh", hook-build:"ln -sf $ZPLUG_REPOS/zimfw/zimfw ~/.zim"
@@ -104,6 +105,8 @@ export FZF_TMUX=1
 
 # }}}
 
+# disable START/STOP output control (<C-S>, <C-Q>)
+stty -ixon # disable XON/XOFF flow control
 
 # customization {{{
 
@@ -126,6 +129,25 @@ alias mc='bundle exec mailcatcher --http-ip 0.0.0.0'
 alias kmc='pkill -fe mailcatcher'
 alias sk='[[ -f config/sidekiq.yml ]] && bundle exec sidekiq -C $PWD/config/sidekiq.yml -d'
 alias ksk='pkill -fe sidekiq'
+alias dump_db='/vagrant/scripts/dump_db.zsh'
+# alias mg_skip='rake db:migrate SKIP_PATCHING_MIGRATION='\''skip_any_patching_related_migrations'\'
+alias mg='rake db:migrate'
+alias rb='rake db:rollback'
+alias rgm='rails generate migration'
+alias g='git'
+alias gs='git status'
+alias gb='git branch'
+alias gckm='git checkout master'
+alias gck='git checkout'
+alias gdf='git diff'
+alias gdfm='git diff master...'
+alias gdfH='git diff HEAD'
+alias gsh='git stash'
+alias gc='git commit --verbose'
+alias gda='git add .'
+alias ll='ls -al'
+alias skmg="rake db:migrate SKIP_PATCHING_MIGRATION='skip_any_patching_related_migrations'"
+alias ggpull='git pull origin $(git_current_branch)'
 
 pairg() { ssh -t $1 ssh -o 'StrictHostKeyChecking=no' -o 'UserKnownHostsFile=/dev/null' -p $2 -t vagrant@localhost 'tmux attach' }
 pairh() { ssh -S none -o 'ExitOnForwardFailure=yes' -R $2\:localhost:22222 -t $1 'watch -en 10 who' }
@@ -149,6 +171,100 @@ cop() {
   fi
 }
 # }}}
+
+# 重啟 puma/unicorn（非 daemon 模式，用於 pry debug）
+rpy() {
+  if bundle show pry-remote > /dev/null 2>&1; then
+    bundle exec pry-remote
+  else
+    rpu pry
+  fi
+}
+
+# 重啟 puma/unicorn
+#
+# - rpu       → 啟動或重啟（如果已有 pid）
+# - rpu kill  → 殺掉 process，不重啟
+# - rpu xxx   → xxx 參數會被丟給 pumactl（不支援 unicorn）
+rpu() {
+  emulate -L zsh
+  if [[ -d tmp ]]; then
+    local action=$1
+    local pid
+    local animal
+
+    if [[ -f config/puma.rb ]]; then
+      animal='puma'
+    elif [[ -f config/unicorn.rb ]]; then
+      animal='unicorn'
+    else
+      echo "No puma/unicorn directory, aborted."
+      return 1
+    fi
+
+    if [[ -r tmp/pids/$animal.pid && -n $(ps h -p `cat tmp/pids/$animal.pid` | tr -d ' ') ]]; then
+      pid=`cat tmp/pids/$animal.pid`
+    fi
+
+    if [[ -n $action ]]; then
+      case "$action" in
+        pry)
+          if [[ -n $pid ]]; then
+            kill -9 $pid && echo "Process killed ($pid)."
+          fi
+          rserver_restart $animal
+          ;;
+        kill)
+          if [[ -n $pid ]]; then
+            kill -9 $pid && echo "Process killed ($pid)."
+          else
+            echo "No process found."
+          fi
+          ;;
+        *)
+          if [[ -n $pid ]]; then
+            # TODO: control unicorn
+            pumactl -p $pid $action
+          else
+            echo 'ERROR: "No running PID (tmp/pids/puma.pid).'
+          fi
+      esac
+    else
+      if [[ -n $pid ]]; then
+        # Alternatives:
+        # pumactl -p $pid restart
+        # kill -USR2 $pid && echo "Process killed ($pid)."
+
+        # kill -9 (SIGKILL) for force kill
+        kill -9 $pid && echo "Process killed ($pid)."
+        rserver_restart $animal $([[ "$animal" == 'puma' ]] && echo '-d' || echo '-D')
+      else
+        rserver_restart $animal $([[ "$animal" == 'puma' ]] && echo '-d' || echo '-D')
+      fi
+    fi
+  else
+    echo 'ERROR: "tmp" directory not found.'
+  fi
+}
+
+# 這是 rpu 會用到的 helper function
+rserver_restart() {
+  local app=${$(pwd):t}
+  [[ ! $app =~ '^(amoeba|cam)' ]] && app='nerv' # support app not named 'nerv' (e.g., nerv2)
+
+  case "$1" in
+    puma)
+      shift
+      RAILS_RELATIVE_URL_ROOT=/$app bundle exec puma -C config/puma.rb config.ru $*
+      ;;
+    unicorn)
+      shift
+      RAILS_RELATIVE_URL_ROOT=/$app bundle exec unicorn -c config/unicorn.rb $* && echo 'unicorn running'
+      ;;
+    *)
+      echo 'invalid argument'
+  esac
+}
 
 # tmux shortcut {{{
 tx() {
@@ -181,6 +297,7 @@ fixssh() {
 # }}}
 
 # aliases {{{
+alias tm='tmux -2 attach || tmux new'
 alias px='ps aux'
 alias vt='vim -c :CtrlP'
 
@@ -224,6 +341,9 @@ bindkey '^j' autosuggest-accept
 
 bindkey '^p' history-substring-search-up
 bindkey '^n' history-substring-search-down
+
+bindkey ',,' cancel-whole-input
+source /usr/local/share/chruby/chruby.sh
 # }}}
 
 # }}}
