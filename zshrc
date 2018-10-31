@@ -64,6 +64,7 @@ zplug "plugins/vi-mode", from:oh-my-zsh
 zplug "plugins/chruby",  from:oh-my-zsh
 zplug "plugins/bundler", from:oh-my-zsh
 zplug "plugins/rails",   from:oh-my-zsh
+zplug "plugins/asdf",    from:oh-my-zsh
 
 zplug "b4b4r07/enhancd", use:init.sh
 zplug "junegunn/fzf", as:command, hook-build:"./install --bin", use:"bin/{fzf-tmux,fzf}"
@@ -343,7 +344,7 @@ bindkey '^p' history-substring-search-up
 bindkey '^n' history-substring-search-down
 
 bindkey ',,' cancel-whole-input
-source /usr/local/share/chruby/chruby.sh
+# source /usr/local/share/chruby/chruby.sh
 # }}}
 
 # }}}
