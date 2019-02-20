@@ -4,12 +4,13 @@
 set hidden
 set hlsearch
 set nowrap
+set list " show trailing spaces
 " set cursorline
 set nostartofline
-if v:version > 702
-  set relativenumber
-  set regexpengine=1
-endif
+" if v:version > 702
+"   set relativenumber
+"   set regexpengine=1
+" endif
 
 set scroll=1
 set scrolloff=3
@@ -29,6 +30,8 @@ nnoremap ' `
 nnoremap ` '
 inoremap jj <ESC>
 noremap  ,, <C-\><C-N>
+noremap  0  ^
+noremap  9  $
 noremap! ,, <C-\><C-N>
 snoremap ,, <C-\><C-N>
 
@@ -37,15 +40,17 @@ nnoremap <silent> <s-tab> :bp<cr>
 
 nnoremap <leader>w  <C-W>
 nnoremap <leader>=  <C-W>=
-nnoremap <leader>s  :set nolist! nolist?<CR>
 nnoremap <leader>n  :set number! number?<CR>
 nnoremap <Leader>hl :set hlsearch! hlsearch?<CR>
+nnoremap <Leader>ps :set paste! paste?<CR>
 nnoremap <leader>iw :set invwrap wrap?<CR>
 nnoremap <leader>ew :e <C-R>=expand('%:h').'/'<cr>
 nnoremap <leader>es :sp <C-R>=expand('%:h').'/'<cr>
 nnoremap <leader>ev :vsp <C-R>=expand('%:h').'/'<cr>
 nnoremap <leader>et :tabe <C-R>=expand('%:h').'/'<cr>
 nnoremap <leader>fc <ESC>/\v^[<=>]{7}( .*\|$)<CR>
+nnoremap <leader>p obinding.pry<Esc>
+
 
 map <Down> gj
 map <Up>   gk
@@ -78,6 +83,11 @@ let g:ycm_collect_identifiers_from_comments_and_strings=1
 
 let g:buftabline_numbers=1
 let g:buftabline_indicators=1
+let g:user_emmet_settings = {
+      \  'javascript.jsx' : {
+      \      'extends': 'jsx'
+      \  },
+      \}
 " }}}
 
 " Tmux {{{
@@ -267,7 +277,7 @@ function! s:rails_test_tmux(method)
   call TmuxNewWindow({
         \   "text": test_command,
         \   "title": '∫ ' . title,
-        \   "directory": rails#app().root,
+        \   "directory": get(b:, 'rails_root', getcwd()),
         \   "remember_pane": 1,
         \   "method": a:method
         \ })
@@ -310,3 +320,22 @@ function! s:RemoveConflictingAlignMaps()
 endfunction
 command! -nargs=0 RemoveConflictingAlignMaps call s:RemoveConflictingAlignMaps()
 silent! autocmd VimEnter * RemoveConflictingAlignMaps
+
+function! s:init_qrpsqlpq()
+  nmap <buffer> <Leader>r [qrpsqlpq]
+  nnoremap <silent> <buffer> [qrpsqlpq]j :call qrpsqlpq#run('split')<CR>
+  nnoremap <silent> <buffer> [qrpsqlpq]l :call qrpsqlpq#run('vsplit')<CR>
+  nnoremap <silent> <buffer> [qrpsqlpq]r :call qrpsqlpq#run()<CR>
+
+  if !exists('b:rails_root')
+    call RailsDetect()
+  endif
+  if !exists('b:rails_root')
+    let b:qrpsqlpq_db_name = 'postgres'
+  endif
+endfunction
+
+if executable('psql')
+  let g:qrpsqlpq_expanded_format_max_lines = -1
+  autocmd FileType sql call s:init_qrpsqlpq()
+endif

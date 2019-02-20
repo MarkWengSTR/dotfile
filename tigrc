@@ -1,3 +1,4 @@
 bind status A !git commit -v --all
 bind status C !git commit -v
 bind main + !git commit -v --amend
+set diff-highlight = true

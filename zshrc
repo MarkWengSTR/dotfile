@@ -65,6 +65,7 @@ zplug "plugins/chruby",  from:oh-my-zsh
 zplug "plugins/bundler", from:oh-my-zsh
 zplug "plugins/rails",   from:oh-my-zsh
 zplug "plugins/asdf",    from:oh-my-zsh
+zplug "plugins/git",    from:oh-my-zsh
 
 zplug "b4b4r07/enhancd", use:init.sh
 zplug "junegunn/fzf", as:command, hook-build:"./install --bin", use:"bin/{fzf-tmux,fzf}"
@@ -138,17 +139,20 @@ alias rgm='rails generate migration'
 alias g='git'
 alias gs='git status'
 alias gb='git branch'
-alias gckm='git checkout master'
-alias gck='git checkout'
-alias gdf='git diff'
-alias gdfm='git diff master...'
+alias gcom='git checkout master'
+alias gdm='git diff master...'
 alias gdfH='git diff HEAD'
 alias gsh='git stash'
 alias gc='git commit --verbose'
+alias gpcc='cop master... && gpc'
 alias gda='git add .'
 alias ll='ls -al'
+alias eee='exit'
 alias skmg="rake db:migrate SKIP_PATCHING_MIGRATION='skip_any_patching_related_migrations'"
-alias ggpull='git pull origin $(git_current_branch)'
+alias ggpull='git pull origin'
+alias gsh0='git stash pop stash@{0}'
+alias y='yarn'
+alias ys='yarn start'
 
 pairg() { ssh -t $1 ssh -o 'StrictHostKeyChecking=no' -o 'UserKnownHostsFile=/dev/null' -p $2 -t vagrant@localhost 'tmux attach' }
 pairh() { ssh -S none -o 'ExitOnForwardFailure=yes' -R $2\:localhost:22222 -t $1 'watch -en 10 who' }
@@ -159,7 +163,7 @@ cop() {
   local extra_options='--display-cop-names --rails'
 
   if [[ $# -gt 0 ]]; then
-    local files=$(eval "git diff $@ --name-only -- \*.{$exts} '$excludes'")
+    local files=$(eval "git diff $@ --diff-filter=d --name-only -- \*.{$exts} '$excludes'")
   else
     local files=$(eval "git status --porcelain -- \*.{$exts} '$excludes' | sed -e '/^\s\?[DRC] /d' -e 's/^.\{3\}//g'")
   fi
@@ -251,7 +255,7 @@ rpu() {
 # 這是 rpu 會用到的 helper function
 rserver_restart() {
   local app=${$(pwd):t}
-  [[ ! $app =~ '^(amoeba|cam)' ]] && app='nerv' # support app not named 'nerv' (e.g., nerv2)
+  [[ ! $app =~ '^(amoeba|cam|angel|nerv_ck)' ]] && app='nerv' # support app not named 'nerv' (e.g., nerv2)
 
   case "$1" in
     puma)
