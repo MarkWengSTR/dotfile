@@ -153,6 +153,7 @@ alias ggpull='git pull origin'
 alias gsh0='git stash pop stash@{0}'
 alias y='yarn'
 alias ys='yarn start'
+alias c='clear'
 
 pairg() { ssh -t $1 ssh -o 'StrictHostKeyChecking=no' -o 'UserKnownHostsFile=/dev/null' -p $2 -t vagrant@localhost 'tmux attach' }
 pairh() { ssh -S none -o 'ExitOnForwardFailure=yes' -R $2\:localhost:22222 -t $1 'watch -en 10 who' }
