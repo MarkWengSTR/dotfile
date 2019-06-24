@@ -1,5 +1,9 @@
 # shell environment initialization {{{
 
+if [[ -z "$TMUX" ]] ; then
+  tmux attach -t default || tmux new -s default
+fi
+
 case "$(uname -s)" in
   Linux)
     source /etc/os-release
@@ -21,21 +25,21 @@ case "$NAME" in
     ;;
 esac
 
-if [[ ! -d ~/.dotfiles ]]; then
-  git clone git://github.com/szetobo/dotfiles.git ~/.dotfiles
+# if [[ ! -d ~/.dotfiles ]]; then
+#   git clone git://github.com/szetobo/dotfiles.git ~/.dotfiles
 
-  ln -sf ~/.dotfiles/gemrc               ~/.gemrc
-  ln -sf ~/.dotfiles/inputrc             ~/.inputrc
-  ln -sf ~/.dotfiles/psqlrc              ~/.psqlrc
-  ln -sf ~/.dotfiles/tigrc               ~/.tigrc
-  ln -sf ~/.dotfiles/tmux.conf           ~/.tmux.conf
-  ln -sf ~/.dotfiles/vimrc.local         ~/.vimrc.local
-  ln -sf ~/.dotfiles/vimrc.bundles.local ~/.vimrc.bundles.local
+#   ln -sf ~/.dotfiles/gemrc               ~/.gemrc
+#   ln -sf ~/.dotfiles/inputrc             ~/.inputrc
+#   ln -sf ~/.dotfiles/psqlrc              ~/.psqlrc
+#   ln -sf ~/.dotfiles/tigrc               ~/.tigrc
+#   ln -sf ~/.dotfiles/tmux.conf           ~/.tmux.conf
+#   ln -sf ~/.dotfiles/vimrc.local         ~/.vimrc.local
+#   ln -sf ~/.dotfiles/vimrc.bundles.local ~/.vimrc.bundles.local
 
-  ln -sf ~/.dotfiles/zshrc               ~/.zshrc
+#   ln -sf ~/.dotfiles/zshrc               ~/.zshrc
 
-  mkdir -p ~/.psql_history
-fi
+#   mkdir -p ~/.psql_history
+# fi
 
 if [[ ! -d ~/.maximum-awesome ]]; then
   git clone git://github.com/square/maximum-awesome.git ~/.maximum-awesome
@@ -127,7 +131,7 @@ alias pa!='[[ -f config/puma.rb ]] && RAILS_RELATIVE_URL_ROOT=/`basename $PWD` b
 alias pa='[[ -f config/puma.rb ]] && RAILS_RELATIVE_URL_ROOT=/`basename $PWD` bundle exec puma -C $PWD/config/puma.rb -d'
 alias kpa='[[ -f tmp/pids/puma.state ]] && bundle exec pumactl -S tmp/pids/puma.state stop'
 
-alias mc='bundle exec mailcatcher --http-ip 0.0.0.0'
+alias mc='mailcatcher --http-ip 0.0.0.0'
 alias kmc='pkill -fe mailcatcher'
 alias sk='[[ -f config/sidekiq.yml ]] && bundle exec sidekiq -C $PWD/config/sidekiq.yml -d'
 alias ksk='pkill -fe sidekiq'
@@ -143,7 +147,7 @@ alias gcom='git checkout master'
 alias gdm='git diff master...'
 alias gdfH='git diff HEAD'
 alias gsh='git stash'
-alias gc='git commit --verbose'
+alias gc='cop master... && git commit --verbose'
 alias gpcc='cop master... && gpc'
 alias gda='git add .'
 alias ll='ls -al'

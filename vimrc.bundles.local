@@ -20,6 +20,7 @@ Plugin 'three/es.next.syntax.vim'
 Plugin 'sheerun/vim-polyglot'
 Plugin 'neomake/neomake'
 Plugin 'sbdchd/neoformat'
+Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
 
 " Plugin 'Valloric/YouCompleteMe'
 " Plugin 'kovisoft/slimv'
