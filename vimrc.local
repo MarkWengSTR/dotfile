@@ -144,6 +144,8 @@ let g:closetag_close_shortcut = '<leader>>'
 
 "}}}
 
+autocmd FileType gitcommit setlocal spell
+
 " Tmux {{{
 " Bracketed Paste Mode
 " Ref http://slashdot.jp/journal/506765/Bracketed-Paste-Mode
