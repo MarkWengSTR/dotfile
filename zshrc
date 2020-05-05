@@ -41,16 +41,16 @@ esac
 #   mkdir -p ~/.psql_history
 # fi
 
-if [[ ! -d ~/.maximum-awesome ]]; then
-  git clone git://github.com/square/maximum-awesome.git ~/.maximum-awesome
-  git clone https://github.com/VundleVim/Vundle.vim.git ~/.maximum-awesome/vim/bundle/Vundle.vim
+# if [[ ! -d ~/.maximum-awesome ]]; then
+#   git clone git://github.com/square/maximum-awesome.git ~/.maximum-awesome
+#   git clone https://github.com/VundleVim/Vundle.vim.git ~/.maximum-awesome/vim/bundle/Vundle.vim
 
-  ln -sf ~/.maximum-awesome/vim ~/.vim
-  ln -sf ~/.maximum-awesome/vimrc ~/.vimrc
-  ln -sf ~/.maximum-awesome/vimrc.bundles ~/.vimrc.bundles
+#   ln -sf ~/.maximum-awesome/vim ~/.vim
+#   ln -sf ~/.maximum-awesome/vimrc ~/.vimrc
+#   ln -sf ~/.maximum-awesome/vimrc.bundles ~/.vimrc.bundles
 
-  vim +BundleInstall +qall
-fi
+#   vim +BundleInstall +qall
+# fi
 
 # }}}
 
@@ -158,6 +158,44 @@ alias gsh0='git stash pop stash@{0}'
 alias y='yarn'
 alias ys='yarn start'
 alias c='clear'
+alias tm='tmux -2 attach || tmux new'
+alias px='ps aux'
+alias vt='vim -c :CtrlP'
+
+alias sa='ssh-add'
+alias salock='ssh-add -x'
+alias saunlock='ssh-add -X'
+
+alias agi='ag -i'
+alias agr='ag --ruby'
+alias agri='ag --ruby -i'
+
+alias -g G='| ag'
+alias -g P='| $PAGER'
+alias -g WC='| wc -l'
+alias -g RE='RESCUE=1'
+
+alias va=vagrant
+alias vsh='va ssh'
+alias vsf='va ssh -- -L 0.0.0.0:8080:localhost:80 -L 1080:localhost:1080'
+alias vup='va up'
+alias vsup='va suspend'
+alias vhalt='va halt'
+
+alias gws=gwS
+alias gba='gb -a'
+alias v='nvim'
+alias vim='nvim'
+
+# folder switch
+alias nerv='cd ~/nerv'
+alias nerv_face='cd ~/nerv/face'
+alias nerv_ck='cd ~/nerv_ck'
+alias angel='cd ~/angel'
+alias angel_face='cd ~/angel/face'
+alias amoeba='cd ~/amoeba'
+alias face='cd ./face'
+
 
 pairg() { ssh -t $1 ssh -o 'StrictHostKeyChecking=no' -o 'UserKnownHostsFile=/dev/null' -p $2 -t vagrant@localhost 'tmux attach' }
 pairh() { ssh -S none -o 'ExitOnForwardFailure=yes' -R $2\:localhost:22222 -t $1 'watch -en 10 who' }
@@ -304,35 +342,6 @@ fixssh() {
     export $(tmux showenv SSH_AUTH_SOCK)
   fi
 }
-# }}}
-
-# aliases {{{
-alias tm='tmux -2 attach || tmux new'
-alias px='ps aux'
-alias vt='vim -c :CtrlP'
-
-alias sa='ssh-add'
-alias salock='ssh-add -x'
-alias saunlock='ssh-add -X'
-
-alias agi='ag -i'
-alias agr='ag --ruby'
-alias agri='ag --ruby -i'
-
-alias -g G='| ag'
-alias -g P='| $PAGER'
-alias -g WC='| wc -l'
-alias -g RE='RESCUE=1'
-
-alias va=vagrant
-alias vsh='va ssh'
-alias vsf='va ssh -- -L 0.0.0.0:8080:localhost:80 -L 1080:localhost:1080'
-alias vup='va up'
-alias vsup='va suspend'
-alias vhalt='va halt'
-
-alias gws=gwS
-alias gba='gb -a'
 # }}}
 
 # environment variables {{{

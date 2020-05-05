@@ -113,7 +113,7 @@ else
 endif
 
 " Don't copy the contents of an overwritten selection.
-vnoremap p "_dP
+vnoremap p "_da<Space><Esc>Pl"_x
 
 " Go crazy!
 if filereadable(expand("~/.vimrc.local"))

@@ -2,10 +2,11 @@
 
 " Editor settings {{{
 set hidden
+set number
+set rnu
 set hlsearch
 set nowrap
-set list " show trailing spaces
-" set cursorline
+set noswapfile
 set nostartofline
 " if v:version > 702
 "   set relativenumber
@@ -52,13 +53,13 @@ nnoremap <leader>et :tabe <C-R>=expand('%:h').'/'<cr>
 nnoremap <leader>fc <ESC>/\v^[<=>]{7}( .*\|$)<CR>
 nnoremap <leader>p obinding.pry<Esc>
 nnoremap <leader>co oconsole.log();<Left><Left>
+map q <Nop>
 
-inoremap { {}<Left>
-inoremap ' ''<Left>
-inoremap " ""<Left>
-inoremap ( ()<Left>
-inoremap [ []<Left>
-inoremap < <></><Left><Left><Left><Left>
+" inoremap { {}<Left>
+" inoremap ' ''<Left>
+" inoremap " ""<Left>
+" inoremap ( ()<Left>
+" inoremap [ []<Left>
 
 map <Down> gj
 map <Up>   gk
@@ -67,9 +68,25 @@ nmap <silent> <F4> :set invpaste<CR>:set paste?<CR>
 imap <silent> <F4> <ESC>:set invpaste<CR>:set paste?<CR>
 imap ,/ </<C-X><C-O>
 
+map <up> <nop>
+map <down> <nop>
+map <left> <nop>
+map <right> <nop>
+inoremap <up> <nop>
+inoremap <down> <nop>
+inoremap <left> <nop>
+inoremap <right> <nop>
+
+inoremap <C-h> <Left>
+inoremap <C-j> <Down>
+inoremap <C-k> <Up>
+inoremap <C-l> <Right>
+
+
 nmap <Leader>rb :SlimuxShellRun bundle exec ruby -Itest <C-R>=expand("%:f")<CR><CR>
 nmap <Leader>rl :SlimuxShellLast<CR>
 nmap <Leader>rc :SlimuxShellConfigure<CR>
+nnoremap <leader><space> :call whitespace#strip_trailing()<CR>
 
 vmap <Enter>   <Plug>(EasyAlign)
 " nmap <leader>a <Plug>(EasyAlign)
@@ -265,6 +282,7 @@ function! s:rails_test_tmux(method)
 
   let rails_type = rails#buffer().type_name()
   let rails_relative = rails#buffer().relative()
+  let rails5 = rails#app().has_rails5()
 
   if rails_type =~ '^test'
     let it = matchstr(
@@ -319,6 +337,11 @@ function! s:rails_test_tmux(method)
   "   let test_command = printf('RAILS_RELATIVE_URL_ROOT= bundle exec rake test:integration TEST=%s', path)
   "   let title = matchstr(rails_type, '\vtest-\zs.{4}')
   else
+    " if rails5
+    "   let test_command = printf('rails test %s %s', path, name_filter)
+    " else
+    "   let test_command = printf('bundle exec ruby -Itest %s%s', path, name_filter)
+    " endif
     let test_command = printf('be ruby -Itest %s --name /%s/', path, shellescape(escape(it, '()')))
     let type_short = matchstr(rails_type, '\vtest-\zs.{4}')
     if type_short == 'unit'
