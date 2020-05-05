@@ -25,21 +25,21 @@ case "$NAME" in
     ;;
 esac
 
-# if [[ ! -d ~/.dotfiles ]]; then
-#   git clone git://github.com/szetobo/dotfiles.git ~/.dotfiles
+if [[ ! -d ~/.dotfiles ]]; then
+  git clone https://github.com/MarkWengSTR/dotfile.git ~/.dotfiles
 
-#   ln -sf ~/.dotfiles/gemrc               ~/.gemrc
-#   ln -sf ~/.dotfiles/inputrc             ~/.inputrc
-#   ln -sf ~/.dotfiles/psqlrc              ~/.psqlrc
-#   ln -sf ~/.dotfiles/tigrc               ~/.tigrc
-#   ln -sf ~/.dotfiles/tmux.conf           ~/.tmux.conf
-#   ln -sf ~/.dotfiles/vimrc.local         ~/.vimrc.local
-#   ln -sf ~/.dotfiles/vimrc.bundles.local ~/.vimrc.bundles.local
+  ln -sf ~/.dotfiles/gemrc               ~/.gemrc
+  ln -sf ~/.dotfiles/inputrc             ~/.inputrc
+  ln -sf ~/.dotfiles/psqlrc              ~/.psqlrc
+  ln -sf ~/.dotfiles/tigrc               ~/.tigrc
+  ln -sf ~/.dotfiles/tmux.conf           ~/.tmux.conf
+  ln -sf ~/.dotfiles/vimrc.local         ~/.vimrc.local
+  ln -sf ~/.dotfiles/vimrc.bundles.local ~/.vimrc.bundles.local
 
-#   ln -sf ~/.dotfiles/zshrc               ~/.zshrc
+  ln -sf ~/.dotfiles/zshrc               ~/.zshrc
 
-#   mkdir -p ~/.psql_history
-# fi
+  mkdir -p ~/.psql_history
+fi
 
 # if [[ ! -d ~/.maximum-awesome ]]; then
 #   git clone git://github.com/square/maximum-awesome.git ~/.maximum-awesome
